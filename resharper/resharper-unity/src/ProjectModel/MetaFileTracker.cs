@@ -12,7 +12,7 @@ using JetBrains.Util;
 
 namespace JetBrains.ReSharper.Plugins.Unity.ProjectModel
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public class MetaFileTracker : IChangeProvider
     {
         private static readonly DateTime ourUnixTime = new DateTime(1970, 1, 1, 0, 0, 0);
