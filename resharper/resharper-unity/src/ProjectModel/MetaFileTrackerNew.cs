@@ -1,10 +1,16 @@
 using System;
 using JetBrains.Application.changes;
+using JetBrains.Application.CommandProcessing;
 using JetBrains.Application.FileSystemTracker;
+using JetBrains.Application.Progress;
 using JetBrains.Application.UI.Components;
 using JetBrains.Collections.Viewable;
+using JetBrains.Diagnostics;
+using JetBrains.DocumentManagers.Transactions;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
+using JetBrains.ProjectModel.Transaction;
+using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.Util;
 
 namespace JetBrains.ReSharper.Plugins.Unity.ProjectModel
@@ -12,12 +18,14 @@ namespace JetBrains.ReSharper.Plugins.Unity.ProjectModel
   [SolutionComponent]
   public class MetaFileTrackerNew
   {
+    private readonly ISolution mySolution;
     private readonly IIsApplicationActiveState myIsApplicationActiveState;
     private readonly ILogger myLogger;
 
     public MetaFileTrackerNew(IFileSystemTracker fileSystemTracker, Lifetime lifetime, ISolution solution, 
       IIsApplicationActiveState isApplicationActiveState, UnitySolutionTracker unitySolutionTracker, ILogger logger)
     {
+      mySolution = solution;
       myIsApplicationActiveState = isApplicationActiveState;
       myLogger = logger;
 
@@ -40,14 +48,85 @@ namespace JetBrains.ReSharper.Plugins.Unity.ProjectModel
         fileSystemChangeDelta.Accept(visitor);
     }
 
-    internal void OnDelete(FileSystemPath path)
+    private void OnDeleted(FileSystemPath path)
     {
       if (path.ExtensionNoDot == "meta")
         return; // ignore changes to meta files
       
-      var metaFile = path.ChangeExtension(path.ExtensionNoDot + ".meta");
-      if (metaFile.ExistsFile)
-        metaFile.DeleteFile();
+      myLogger.Trace("*** resharper-unity: File deleted {0}", path);
+
+      var metaFile = GetMetaFile(path);
+      DeleteMetaFile(metaFile);
+    }
+    
+    private void OnRenamed(FileSystemChangeDelta delta)
+    {
+      if (delta.OldPath.ExtensionNoDot == "meta")
+        return; // ignore changes to meta files
+      
+      myLogger.Trace("*** resharper-unity: Renamed {0} -> {1}", delta.OldPath, delta.NewPath);
+
+      var newMetaFile = GetMetaFile(delta.NewPath);
+      if (!newMetaFile.ExistsFile)
+      {
+        var oldMetaFile = GetMetaFile(delta.OldPath);
+        if (newMetaFile != oldMetaFile)
+        {
+          if (oldMetaFile.ExistsFile)
+            RenameMetaFile(oldMetaFile, newMetaFile, string.Empty);
+        }
+      }
+    }
+    
+    private static FileSystemPath GetMetaFile(FileSystemPath location)
+    {
+      return FileSystemPath.Parse(location + ".meta");
+    }
+    
+    private void DeleteMetaFile(FileSystemPath path)
+    {
+      try
+      {
+        if (path.ExistsFile)
+        {
+          DoUnderTransaction("Unity::DeleteMetaFile", path.DeleteFile);
+          myLogger.Info("*** resharper-unity: Meta removed {0}", path);
+        }
+      }
+      catch (Exception e)
+      {
+        myLogger.LogException(LoggingLevel.ERROR, e, ExceptionOrigin.Assertion,
+          $"Failed to delete Unity meta file {path}");
+      }
+    }
+    
+    private void RenameMetaFile(FileSystemPath oldPath, FileSystemPath newPath, string extraDetails)
+    {
+      try
+      {
+        myLogger.Info("*** resharper-unity: Meta renamed{2} {0} -> {1}", oldPath, newPath, extraDetails);
+        DoUnderTransaction("Unity::RenameMetaFile", () => oldPath.MoveFile(newPath, true));
+      }
+      catch (Exception e)
+      {
+        myLogger.LogException(LoggingLevel.ERROR, e, ExceptionOrigin.Assertion,
+          $"Failed to rename Unity meta file {oldPath} -> {newPath}");
+      }
+    }
+    
+    private void DoUnderTransaction(string command, Action action)
+    {
+      // Create a transaction - Rider will hook the file system and cause the VFS to refresh
+      using (mySolution.GetComponent<ICommandProcessor>().UsingCommand("Project Model Modification"))
+      {
+        // create ProjectModelBatchChangeCookie at first to send all changes only after commit transaction (and changes in file system)
+        using (WriteLockCookie.Create())
+        using (new ProjectModelBatchChangeCookie(mySolution, SimpleTaskExecutor.Instance))
+        using (var cookie = mySolution.CreateTransactionCookie(DefaultAction.Commit, "Execute Rider action"))
+        {
+          action();
+        }
+      }
     }
     
     private class Visitor : RecursiveFileSystemChangeDeltaVisitor
@@ -65,14 +144,15 @@ namespace JetBrains.ReSharper.Plugins.Unity.ProjectModel
       {
         base.Visit(delta);
         
-        myLogger.Info($"MetaFileTrackerNew {delta.ChangeType}, {delta.NewPath}, {delta.OldPath}");
+        myLogger.Info($"*** resharper-unity: {delta.ChangeType}, {delta.NewPath}, {delta.OldPath}");
 
         switch (delta.ChangeType)
         {
           case FileSystemChangeType.DELETED:
-            myMetaFileTrackerNew.OnDelete(delta.OldPath);
+            myMetaFileTrackerNew.OnDeleted(delta.OldPath);
             break;
           case FileSystemChangeType.RENAMED:
+            myMetaFileTrackerNew.OnRenamed(delta);
             break;
           case FileSystemChangeType.UNKNOWN:
           case FileSystemChangeType.SUBTREE_CHANGED:
