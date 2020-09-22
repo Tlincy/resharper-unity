@@ -1,4 +1,4 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.jetbrains.rider.run.configurations.unity.UnityAttachConfigurationParameters
 import java.nio.file.Path

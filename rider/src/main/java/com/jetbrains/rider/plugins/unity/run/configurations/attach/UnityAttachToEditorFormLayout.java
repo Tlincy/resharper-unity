@@ -1,8 +1,6 @@
-package com.jetbrains.rider.plugins.unity.run.configurations;
+package com.jetbrains.rider.plugins.unity.run.configurations.attach;
 
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder;
-import com.intellij.ui.ContextHelpLabel;
-import com.intellij.ui.HyperlinkLabel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;

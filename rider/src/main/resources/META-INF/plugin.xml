@@ -99,7 +99,7 @@
     <projectModelViewExtensions implementation="com.jetbrains.rider.plugins.unity.explorer.UnityProjectModelViewExtensions"/>
 
     <!-- Run configurations -->
-    <configurationType implementation="com.jetbrains.rider.plugins.unity.run.configurations.UnityDebugConfigurationType" />
+    <configurationType implementation="com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityDebugConfigurationType" />
     <configurationType implementation="com.jetbrains.rider.plugins.unity.run.configurations.unityExe.UnityExeConfigurationType" />
 
     <!-- Debugger -->

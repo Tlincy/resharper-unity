@@ -1,4 +1,4 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.intellij.execution.ExecutionResult
 import com.intellij.execution.Executor
@@ -17,6 +17,7 @@ import com.jetbrains.rider.debugger.RiderDebugActiveDotNetSessionsTracker
 import com.jetbrains.rider.isUnityProject
 import com.jetbrains.rider.model.rdUnityModel
 import com.jetbrains.rider.plugins.unity.run.UnityDebuggerOutputListener
+import com.jetbrains.rider.plugins.unity.run.configurations.withUnityExtensionsEnabledEnvironment
 import com.jetbrains.rider.plugins.unity.util.UnityInstallationFinder
 import com.jetbrains.rider.plugins.unity.util.addPlayModeArguments
 import com.jetbrains.rider.plugins.unity.util.convertPidToDebuggerPort

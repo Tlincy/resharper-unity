@@ -1,4 +1,4 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.intellij.execution.impl.CheckableRunConfigurationEditor
 import com.intellij.openapi.options.SettingsEditor

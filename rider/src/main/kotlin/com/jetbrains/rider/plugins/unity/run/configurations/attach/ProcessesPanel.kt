@@ -1,4 +1,4 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent

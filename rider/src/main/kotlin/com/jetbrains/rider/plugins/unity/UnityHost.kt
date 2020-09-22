@@ -22,8 +22,8 @@ import com.jetbrains.rider.plugins.unity.editorPlugin.model.RdLogEvent
 import com.jetbrains.rider.plugins.unity.editorPlugin.model.RdLogEventMode
 import com.jetbrains.rider.plugins.unity.editorPlugin.model.RdLogEventType
 import com.jetbrains.rider.plugins.unity.run.DefaultRunConfigurationGenerator
-import com.jetbrains.rider.plugins.unity.run.configurations.UnityAttachToEditorRunConfiguration
-import com.jetbrains.rider.plugins.unity.run.configurations.UnityDebugConfigurationType
+import com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityAttachToEditorRunConfiguration
+import com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityDebugConfigurationType
 import com.jetbrains.rider.plugins.unity.util.Utils.Companion.AllowUnitySetForegroundWindow
 import com.jetbrains.rider.projectView.solution
 import java.awt.Frame

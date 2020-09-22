@@ -1,4 +1,4 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.intellij.execution.process.OSProcessUtil
 import com.intellij.execution.process.ProcessInfo

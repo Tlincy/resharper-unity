@@ -1,7 +1,8 @@
-package com.jetbrains.rider.plugins.unity.run.configurations
+package com.jetbrains.rider.plugins.unity.run.configurations.attach
 
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.openapi.project.Project
+import com.jetbrains.rider.plugins.unity.run.configurations.UnityConfigurationFactoryBase
 import icons.UnityIcons
 
 

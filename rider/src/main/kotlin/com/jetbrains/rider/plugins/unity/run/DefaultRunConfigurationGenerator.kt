@@ -8,9 +8,9 @@ import com.jetbrains.rd.platform.util.idea.ProtocolSubscribedProjectComponent
 import com.jetbrains.rd.util.reactive.adviseNotNull
 import com.jetbrains.rd.util.reactive.whenTrue
 import com.jetbrains.rider.model.rdUnityModel
-import com.jetbrains.rider.plugins.unity.run.configurations.UnityAttachToEditorAndPlayFactory
-import com.jetbrains.rider.plugins.unity.run.configurations.UnityAttachToEditorFactory
-import com.jetbrains.rider.plugins.unity.run.configurations.UnityDebugConfigurationType
+import com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityAttachToEditorAndPlayFactory
+import com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityAttachToEditorFactory
+import com.jetbrains.rider.plugins.unity.run.configurations.attach.UnityDebugConfigurationType
 import com.jetbrains.rider.plugins.unity.run.configurations.unityExe.UnityExeConfiguration
 import com.jetbrains.rider.plugins.unity.run.configurations.unityExe.UnityExeConfigurationFactory
 import com.jetbrains.rider.plugins.unity.run.configurations.unityExe.UnityExeConfigurationType
